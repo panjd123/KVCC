@@ -1,8 +1,9 @@
 CC = g++
-CFLAGS = -Wall -std=c++17 -O3
-COMMON_HEADER = common.hpp dinic.hpp
+CFLAGS = -Wall -std=c++17 -g -O3
+COMMON_HEADER = common.hpp dinic.hpp kvcc.hpp
 
-all: local_cut global_cut kvcc_baseline
+# local_cut global_cut 
+all: kvcc_baseline
 
 local_cut: local_cut.cpp $(COMMON_HEADER)
 	$(CC) $(CFLAGS) -o local_cut local_cut.cpp
