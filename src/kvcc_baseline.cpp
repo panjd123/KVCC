@@ -11,8 +11,8 @@ fstream fout;
 
 int main(int argc, char** argv) {
     ios::sync_with_stdio(false);
-    program.add_argument("-g", "--graph").default_value(string("google"));
-    program.add_argument("-k", "--k").default_value(10).default_value(10).action([](const string& value) { return stoi(value); });
+    program.add_argument("-g", "--graph").default_value(string("dblp"));
+    program.add_argument("-k", "--k").default_value(10).default_value(20).action([](const string& value) { return stoi(value); });
     program.add_argument("-o", "--output").default_value(string("/dev/fd/1"));
     program.parse_args(argc, argv);
 
@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
     for (auto it = rawNodeId.begin(); it != end; it++) {
         nodeId[*it] = it - rawNodeId.begin();
     }
-    graph.edges.reserve(m * 2);
     for (auto e : rawEdges) {
         int u = nodeId[e.first], v = nodeId[e.second];
         graph.addEdge(u, v);

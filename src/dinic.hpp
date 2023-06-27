@@ -20,15 +20,14 @@ struct Dinic {
     }
     int bfs() {
         fill(depth.begin(), depth.end(), 0);
-        copy(graph.head.begin(), graph.head.end(), cur.begin());
+        fill(cur.begin(), cur.end(), 0);
         queue<int> q;
         q.push(source);
         depth[source] = 1;
         while (!q.empty()) {
             int u = q.front();
             q.pop();
-            for (int i = graph.head[u]; ~i; i = graph.edges[i].next) {
-                auto& e = graph.edges[i];
+            for (auto& e : graph.edges[u]) {
                 if (e.flow < e.capacity && !depth[e.to]) {
                     depth[e.to] = depth[u] + 1;
                     q.push(e.to);
@@ -41,12 +40,12 @@ struct Dinic {
         if (u == sink || flow_in == 0)
             return flow_in;
         int flow_out = 0;
-        for (int& i = cur[u]; ~i; i = graph.edges[i].next) {
-            auto& e = graph.edges[i];
+        for (int& i = cur[u]; i < (int)graph.edges[u].size(); i++) {
+            auto& e = graph.edges[u][i];
             if (e.flow < e.capacity && depth[e.to] == depth[u] + 1) {
                 int f = dfs(e.to, min(flow_in - flow_out, e.capacity - e.flow));
                 e.flow += f;
-                graph.edges[i ^ 1].flow -= f;
+                graph.edges[e.to][e.rev].flow -= f;
                 flow_out += f;
                 if (flow_in == flow_out)
                     break;
@@ -63,8 +62,7 @@ struct Dinic {
     }
     void dfsCut(int u) {
         vis[u] = true;
-        for (int i = graph.head[u]; ~i; i = graph.edges[i].next) {
-            auto& e = graph.edges[i];
+        for (auto& e : graph.edges[u]) {
             if (e.flow < e.capacity && !vis[e.to]) {
                 dfsCut(e.to);
             }
@@ -77,9 +75,11 @@ struct Dinic {
         fill(vis.begin(), vis.end(), false);
         dfsCut(source);
         vector<Edge> cut;
-        for (auto& e : graph.edges) {
-            if (vis[e.from] && !vis[e.to] && e.capacity > 0) {
-                cut.push_back(e);
+        for (auto& es : graph.edges) {
+            for (auto& e : es) {
+                if (e.capacity == e.flow && e.capacity > 0 && vis[e.from] && !vis[e.to]) {
+                    cut.push_back(e);
+                }
             }
         }
         return cut;

@@ -10,42 +10,38 @@ using tp = time_point<system_clock>;
 const int INF = 0x3f3f3f3f;
 
 struct Edge {
-    int from, to, flow, capacity, next;
+    int from, to, flow, capacity, rev;
     Edge() {}
-    Edge(int from, int to, int capacity, int next)
-        : from(from), to(to), flow(0), capacity(capacity), next(next) {}
+    Edge(int from, int to, int capacity, int rev)
+        : from(from), to(to), flow(0), capacity(capacity), rev(rev) {}
 };
 
 struct Graph {
     int n;
-    vector<int> head;
-    vector<int> degree;
-    vector<Edge> edges;
+    vector<vector<Edge>> edges;
     void init(int n) {
         this->n = n;
-        head.assign(n, -1);
-        degree.assign(n, 0);
-        edges.clear();
+        edges.assign(n, vector<Edge>());
     }
     Graph(int n = 0) {
         init(n);
     }
-    void addEdge(int from, int to, int capacity = 0) {
-        edges.emplace_back(from, to, capacity, head[from]);
-        head[from] = edges.size() - 1;
+    void addEdge(int from, int to, int capacity = 0, int rev = 0) {
+        edges[from].emplace_back(from, to, capacity, rev);
     }
     void addFlowEdge(int from, int to, int capacity) {
-        addEdge(from, to, capacity);
-        addEdge(to, from, 0);
-    }
-    void calDeg() {
-        for (auto e : edges) {
-            degree[e.to]++;
-        }
+        addEdge(from, to, capacity, edges[to].size());
+        addEdge(to, from, 0, edges[from].size() - 1);
     }
     int minDegVertex() {
-        calDeg();
-        return min_element(degree.begin(), degree.end()) - degree.begin();
+        int mn = INF, idx = -1;
+        for (int i = 0; i < n; i++) {
+            if ((int)edges[i].size() < mn) {
+                mn = edges[i].size();
+                idx = i;
+            }
+        }
+        return idx;
     }
 };
 

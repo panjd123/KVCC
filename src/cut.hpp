@@ -18,8 +18,10 @@ vector<int> calLocolCut(Graph& graph, int source, int sink) {
             g.addFlowEdge(u, u + n, INF);
         }
     }
-    for (auto& e : graph.edges) {
-        g.addFlowEdge(e.from + n, e.to, INF);
+    for (auto& es : graph.edges) {
+        for (auto& e : es) {
+            g.addFlowEdge(e.from + n, e.to, INF);
+        }
     }
 
     // 初始化dinic
@@ -44,11 +46,11 @@ tuple<vector<int>, int, int> calGlobalCut(Graph& graph) {
         }
     }
     // case2: 两两邻居
-    for (int i = graph.head[source]; ~i; i = graph.edges[i].next) {
-        auto& e1 = graph.edges[i];
+    for (int i = 0; i < (int)graph.edges[source].size(); i++) {
+        auto& e1 = graph.edges[source][i];
         int v1 = e1.to;
-        for (int j = graph.edges[i].next; ~j; j = graph.edges[j].next) {
-            auto& e2 = graph.edges[j];
+        for (int j = i + 1; j < (int)graph.edges[source].size(); j++) {
+            auto& e2 = graph.edges[source][j];
             int v2 = e2.to;
             auto cut = calLocolCut(graph, v1, v2);
             if (!cut.empty()) {

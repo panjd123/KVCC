@@ -12,8 +12,8 @@ vector<Graph> getKCore(Graph graph, int k) {
     vector<int> id(n, -1);       // 在子图中的编号
     vector<bool> inKCore(n, 1);  // 是否在 k-core 中
     vector<int> degree(n, 0);
-    for (auto e : graph.edges) {
-        degree[e.to]++;
+    for (int i = 0; i < n; i++) {
+        degree[i] = graph.edges[i].size();
     }
     queue<int> q;
     for (int i = 0; i < n; i++) {
@@ -25,8 +25,8 @@ vector<Graph> getKCore(Graph graph, int k) {
         int u = q.front();
         q.pop();
         inKCore[u] = 0;
-        for (int i = graph.head[u]; ~i; i = graph.edges[i].next) {
-            int v = graph.edges[i].to;
+        for (auto& e : graph.edges[u]) {
+            int v = e.to;
             degree[v]--;
             if (degree[v] == k - 1) {  // 保证每个点只会在第一次小于 k 时被 push
                 q.push(v);
@@ -45,8 +45,8 @@ vector<Graph> getKCore(Graph graph, int k) {
                 q.pop();
                 color[u] = graphCnt;
                 id[u] = nodeCnt++;
-                for (int i = graph.head[u]; ~i; i = graph.edges[i].next) {
-                    int v = graph.edges[i].to;
+                for (auto& e : graph.edges[u]) {
+                    int v = e.to;
                     if (inKCore[v] && color[v] == -1) {
                         q.push(v);
                         subGraphEdges.emplace_back(u, v);
