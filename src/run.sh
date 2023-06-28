@@ -3,34 +3,40 @@ K_DBLP=(40 35 30 25 20)
 K_GOOGLE=(40 35 30 25)
 K_STANFORD=(40)
 
-# MAIN="./kvcc_baseline"
-# RESULT_DIR="../results"
+if [[ $# -ne 1 || $1 != "baseline" && $1 != "sweep" ]]; then
+    echo "Usage: ./run.sh [baseline|sweep]"
+    exit 1
+fi
 
-MAIN="./kvcc_sweep"
-RESULT_DIR="../results_sweep"
+MAIN="./kvcc_$1"
+RESULT_DIR="../results"
 
 if [ ! -d $RESULT_DIR ]; then
     mkdir $RESULT_DIR
 fi
 
-for g in ${GRAPH[@]}; do
-    if [ $g == "dblp" ]; then
-        for k in ${K_DBLP[@]}; do
-            outputFileName="$RESULT_DIR/$g-k$k.txt"
-            echo "Running $g with k=$k > $outputFileName"
-            $MAIN -g $g -k $k -o $outputFileName
+round=5
+
+dateTime=$(date +"%m%d_%H%M%S")
+logFileName="./$1_$dateTime.log"
+echo "Logging to $logFileName"
+
+for ((i=0; i<$round; i++)); do
+    echo "Round $i"
+    for g in ${GRAPH[@]}; do
+        K=()
+        if [ $g == "dblp" ]; then
+            K=(${K_DBLP[@]})
+        elif [ $g == "google" ]; then
+            K=(${K_GOOGLE[@]})
+        elif [ $g == "stanford" ]; then
+            K=(${K_STANFORD[@]})
+        fi
+        for k in ${K[@]}; do
+            echo "Running $g with k=$k"
+            outputFileName="$RESULT_DIR/${g}_k$k.txt"
+            echo "Output to $outputFileName"
+            $MAIN -g $g -k $k -o $outputFileName >> $logFileName
         done
-    elif [ $g == "google" ]; then
-        for k in ${K_GOOGLE[@]}; do
-            outputFileName="$RESULT_DIR/$g-k$k.txt"
-            echo "Running $g with k=$k > $outputFileName"
-            $MAIN -g $g -k $k -o $outputFileName
-        done
-    elif [ $g == "stanford" ]; then
-        for k in ${K_STANFORD[@]}; do
-            outputFileName="$RESULT_DIR/$g-k$k.txt"
-            echo "Running $g with k=$k > $outputFileName"
-            $MAIN -g $g -k $k -o $outputFileName
-        done
-    fi
+    done
 done

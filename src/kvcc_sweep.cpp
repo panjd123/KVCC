@@ -334,7 +334,10 @@ int main(int argc, char** argv) {
     fstream fin(path);
     fout.open(program.get<string>("--output"), ios::out);
     fin >> n >> m;
-    cerr << "n=" << n << " m=" << m << " k=" << k << " graph=" << filename << endl;
+    cout << "graph=" << filename << endl;
+    cout << "k=" << k << endl;
+    cout << "n=" << n << endl;
+    cout << "m=" << m << endl;
 
     Graph graph(n);
     vector<pair<int, int>> rawEdges;
@@ -368,14 +371,14 @@ int main(int argc, char** argv) {
     timer.tic("kvcc");
     auto kvcc = getKVCCSweep(graph, k);
     timer.toc("kvcc");
-    sort(kvcc.begin(), kvcc.end(), [](const vector<int>& a, const vector<int>& b) {
-        return a.size() == b.size() ? a[0] < b[0] : a.size() > b.size();
-    });
     for (auto& cc : kvcc) {
         sort(cc.begin(), cc.end());
     }
+    sort(kvcc.begin(), kvcc.end(), [](const vector<int>& a, const vector<int>& b) {
+        return a.size() == b.size() ? a[0] < b[0] : a.size() < b.size();
+    });
 
-    cerr << "kvcc num = " << kvcc.size() << endl;
+    cout << "kvcc num=" << kvcc.size() << endl;
     fout << "k = " << k << ", "
          << "KVCC num = " << kvcc.size() << endl;
     for (auto& cc : kvcc) {

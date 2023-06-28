@@ -88,7 +88,7 @@ struct Timer {
     double toc(string s) {
         end = system_clock::now();
         duration<double> elapsed_seconds = end - m[s];
-        cout << s << " time: " << elapsed_seconds.count() << endl;
+        cout << s << " time=" << elapsed_seconds.count() << endl;
         m[s] = system_clock::now();
         return elapsed_seconds.count();
     }
