@@ -10,15 +10,20 @@ fi
 
 MAIN="./kvcc_$1"
 RESULT_DIR="../results"
+LOG_DIR="../logs"
 
 if [ ! -d $RESULT_DIR ]; then
     mkdir $RESULT_DIR
 fi
 
+if [ ! -d $LOG_DIR ]; then
+    mkdir $LOG_DIR
+fi
+
 round=5
 
 dateTime=$(date +"%m%d_%H%M%S")
-logFileName="./$1_$dateTime.log"
+logFileName="$LOG_DIR/$1_$dateTime.log"
 echo "Logging to $logFileName"
 
 for ((i=0; i<$round; i++)); do

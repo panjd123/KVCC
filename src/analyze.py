@@ -6,8 +6,8 @@ import re
 import pandas as pd
 import matplotlib.pyplot as plt
 
-baseline_log_file = "baseline_0628_191211.log"
-sweep_log_file = "sweep_0628_192059.log"
+baseline_log_file = "../logs/baseline_0628_191211.log"
+sweep_log_file = "../logs/sweep_0628_192059.log"
 
 
 def extract(file=sweep_log_file):

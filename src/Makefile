@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -std=c++17 -g -O3
+CFLAGS = -Wall -std=c++17 -O3
 COMMON_HEADER = common.hpp dinic.hpp kvcc.hpp
 
 all: local_cut global_cut kvcc_baseline kvcc_sweep
@@ -17,4 +17,4 @@ kvcc_sweep: kvcc_sweep.cpp $(COMMON_HEADER)
 	$(CC) $(CFLAGS) -o kvcc_sweep kvcc_sweep.cpp
 
 clean:
-	rm -f local_cut global_cut kvcc_baseline
+	rm -f local_cut global_cut kvcc_baseline kvcc_sweep
