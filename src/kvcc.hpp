@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <numeric>
 #include <queue>
 #include <unordered_set>
@@ -8,6 +9,7 @@
 #include "common.hpp"
 #include "cut.hpp"
 
+// 用于检查KVCC的正确性
 void graphCheck(Graph& graph, string_view msg = "") {
     cerr << msg << endl;
     for (int i = 0; i < graph.n; i++) {
@@ -27,6 +29,7 @@ void graphCheck(Graph& graph, string_view msg = "") {
     cerr << "graph check pass" << endl;
 }
 
+// 输出图的信息
 void graphInfo(Graph& graph) {
     cerr << "graph info: " << endl;
     cerr << "n: " << graph.n << endl;
@@ -125,6 +128,7 @@ vector<vector<int>> getKVCC(Graph graph, int k, bool runnning = false) {
         }
     }
 
+    // 求 k-core 的连通分量
     for (int i = 0; i < n; i++) {
         if (inKCore[i] && color[i] == -1) {
             vector<pair<int, int>> subGraphEdges;
@@ -160,11 +164,12 @@ vector<vector<int>> getKVCC(Graph graph, int k, bool runnning = false) {
         }
     }
 
+    // 遍历每个连通分量 subGraph，考察是否是 kvcc
     for (auto& subGraph : kCore) {
         auto [cut, source, sink] = calGlobalCut(subGraph, k);
-        if (cut.empty()) {
+        if (cut.empty()) {  // 是 kvcc
             result.push_back(subGraph.id);
-        } else {
+        } else {  // 不是 kvcc，利用割点将子图继续分成多个连通分量 subSubGraph，每个分量重复调用 getKVCC
             graphCnt = 0;
             color.assign(subGraph.n, -1);
             vector<int> rawNodeId;

@@ -1,11 +1,14 @@
-# GRAPH=(dblp google stanford)
-GRAPH=(dblp)
-K_DBLP=(20 25 30 35 40)
-K_GOOGLE=(25 30 35 40)
+GRAPH=(dblp google stanford)
+K_DBLP=(40 35 30 25 20)
+K_GOOGLE=(40 35 30 25)
 K_STANFORD=(40)
 
-MAIN="./kvcc_baseline"
-RESULT_DIR="../results"
+# MAIN="./kvcc_baseline"
+# RESULT_DIR="../results"
+
+MAIN="./kvcc_sweep"
+RESULT_DIR="../results_sweep"
+
 if [ ! -d $RESULT_DIR ]; then
     mkdir $RESULT_DIR
 fi

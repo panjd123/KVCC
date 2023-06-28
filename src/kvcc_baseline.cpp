@@ -1,6 +1,8 @@
-#include <bits/stdc++.h>
+#include <fstream>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 #include "common.hpp"
-#include "cut.hpp"
 #include "kvcc.hpp"
 #include "third-party/argparse/argparse.hpp"
 using namespace std;
@@ -59,7 +61,9 @@ int main(int argc, char** argv) {
     timer.tic("kvcc");
     auto kvcc = getKVCC(graph, k);
     timer.toc("kvcc");
-    sort(kvcc.begin(), kvcc.end(), [](const vector<int>& a, const vector<int>& b) { return a.size() < b.size(); });
+    sort(kvcc.begin(), kvcc.end(), [](const vector<int>& a, const vector<int>& b) {
+        return a.size() == b.size() ? a[0] < b[0] : a.size() > b.size();
+    });
     for (auto& cc : kvcc) {
         sort(cc.begin(), cc.end());
     }
@@ -73,10 +77,6 @@ int main(int argc, char** argv) {
             fout << u << " ";
         }
         fout << endl;
-        vector<int> rcc(cc.size());
-        for (int i = 0; i < (int)cc.size(); i++) {
-            rcc[i] = nodeId[cc[i]];
-        }
     }
     timer.toc("program");
 }
