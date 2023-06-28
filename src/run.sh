@@ -20,7 +20,7 @@ if [ ! -d $LOG_DIR ]; then
     mkdir $LOG_DIR
 fi
 
-round=5
+round=1
 
 dateTime=$(date +"%m%d_%H%M%S")
 logFileName="$LOG_DIR/$1_$dateTime.log"

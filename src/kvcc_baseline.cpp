@@ -197,6 +197,7 @@ int main(int argc, char** argv) {
     timer.tic("preprocess");
     sort(rawNodeId.begin(), rawNodeId.end());
     auto end = unique(rawNodeId.begin(), rawNodeId.end());
+    nodeId.reserve(end - rawNodeId.begin());
     for (auto it = rawNodeId.begin(); it != end; it++) {
         nodeId[*it] = it - rawNodeId.begin();
     }

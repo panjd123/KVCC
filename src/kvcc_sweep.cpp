@@ -14,6 +14,9 @@
 
 using namespace std;
 
+double ssvTime = 0;
+double sweepTime = 0;
+
 vector<int> bfsDistOrder(Graph& graph, int source) {
     vector<int> dist(graph.n, INF);
     dist[source] = 0;
@@ -32,7 +35,7 @@ vector<int> bfsDistOrder(Graph& graph, int source) {
     }
     vector<int> d(graph.n);
     iota(d.begin(), d.end(), 0);
-    sort(d.begin(), d.end(), [&](int i, int j) { return dist[i] < dist[j]; });
+    sort(d.begin(), d.end(), [&](int i, int j) { return dist[i] > dist[j]; });
     return d;
 }
 
@@ -109,6 +112,7 @@ bool isStrongSideVertex(Graph& graph, int k, int u) {
     auto n = neighbor(graph, u);
     int cnt = 0;
     sort(n.begin(), n.end(), [&](int i, int j) { return graph.edges[i].size() < graph.edges[j].size(); });
+    // 按照 N(neighbor) 的大小排序，从小的组合开始尝试，更容易提前找到不够大的交，提前剪枝
     for (int k = 1; k < 2 * (int)n.size() - 2; k++) {
         for (int i = max(k - (int)n.size() + 1, 0); i < (int)n.size() && 2 * i < k; i++) {
             int j = k - i;
@@ -138,7 +142,7 @@ bool isStrongSideVertex(Graph& graph, int k, int u) {
     return true;
 }
 
-vector<vector<int>> getKVCCSweep(Graph graph, int k, bool runnning = false) {
+vector<vector<int>> getKVCCSweep(Graph& graph, int k, bool runnning = false) {
     static vector<vector<int>> result;
     if (!runnning) {
         result.clear();
@@ -287,8 +291,8 @@ vector<vector<int>> getKVCCSweep(Graph graph, int k, bool runnning = false) {
                     nodeCnt = 0;
                     subSubGraph.genEdgeSet();
                     Sweep::intersectionSize.clear();
-                    bool hasCutNeighbor = false;
                     for (auto u : subGraphVertex) {
+                        bool hasCutNeighbor = false;
                         if (graph.strongSideVertex.find(u) != graph.strongSideVertex.end()) {
                             for (auto& e : graph.edges[u]) {
                                 int v = e.to;                          // neighbors
@@ -388,5 +392,7 @@ int main(int argc, char** argv) {
         }
         fout << endl;
     }
+    cout << "ssvTime=" << ssvTime << endl;
+    cout << "sweepTime=" << sweepTime << endl;
     timer.toc("program");
 }

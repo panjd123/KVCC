@@ -7,7 +7,6 @@
 // 寻找小于等于k的最小局部割
 vector<int> calLocolCut(Graph& graph, int source, int sink, int k = INF) {
     static Dinic dinic;
-    // cerr << "calLocolCut: " << source << " " << sink << endl;
 
     // 初始化图，建图
     int n = graph.n;
