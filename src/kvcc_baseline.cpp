@@ -10,9 +10,10 @@ Timer timer;
 fstream fout;
 
 int main(int argc, char** argv) {
+    timer.tic("program");
     ios::sync_with_stdio(false);
     program.add_argument("-g", "--graph").default_value(string("dblp"));
-    program.add_argument("-k", "--k").default_value(10).default_value(20).action([](const string& value) { return stoi(value); });
+    program.add_argument("-k", "--k").default_value(35).action([](const string& value) { return stoi(value); });
     program.add_argument("-o", "--output").default_value(string("/dev/fd/1"));
     program.parse_args(argc, argv);
 
@@ -24,7 +25,7 @@ int main(int argc, char** argv) {
     fstream fin(path);
     fout.open(program.get<string>("--output"), ios::out);
     fin >> n >> m;
-    cerr << "n=" << n << " m=" << m << endl;
+    cerr << "n=" << n << " m=" << m << " k=" << k << " graph=" << filename << endl;
 
     Graph graph(n);
     vector<pair<int, int>> rawEdges;
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
         fin >> u >> v;
         rawEdges.emplace_back(u, v);
         rawNodeId.emplace_back(u);
+        rawNodeId.emplace_back(v);
     }
     timer.toc("input");
 
@@ -51,11 +53,30 @@ int main(int argc, char** argv) {
         graph.addEdge(u, v);
         graph.addEdge(v, u);
     }
+    graph.id = rawNodeId;
     timer.toc("preprocess");
 
     timer.tic("kvcc");
-    timer.tic("k-core");
-    vector<Graph> kCore = getKCore(graph, k);
-    timer.toc("k-core");
+    auto kvcc = getKVCC(graph, k);
     timer.toc("kvcc");
+    sort(kvcc.begin(), kvcc.end(), [](const vector<int>& a, const vector<int>& b) { return a.size() < b.size(); });
+    for (auto& cc : kvcc) {
+        sort(cc.begin(), cc.end());
+    }
+
+    cerr << "kvcc num = " << kvcc.size() << endl;
+    fout << "k = " << k << ", "
+         << "KVCC num = " << kvcc.size() << endl;
+    for (auto& cc : kvcc) {
+        fout << "Node num = " << cc.size() << endl;
+        for (auto& u : cc) {
+            fout << u << " ";
+        }
+        fout << endl;
+        vector<int> rcc(cc.size());
+        for (int i = 0; i < (int)cc.size(); i++) {
+            rcc[i] = nodeId[cc[i]];
+        }
+    }
+    timer.toc("program");
 }

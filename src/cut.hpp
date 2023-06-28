@@ -4,8 +4,10 @@
 #include "common.hpp"
 #include "dinic.hpp"
 
-vector<int> calLocolCut(Graph& graph, int source, int sink) {
+// 寻找小于等于k的最小局部割
+vector<int> calLocolCut(Graph& graph, int source, int sink, int k = INF) {
     static Dinic dinic;
+    // cerr << "calLocolCut: " << source << " " << sink << endl;
 
     // 初始化图，建图
     int n = graph.n;
@@ -27,6 +29,9 @@ vector<int> calLocolCut(Graph& graph, int source, int sink) {
     // 初始化dinic
     dinic.init(source, sink + n);
     auto cutE = dinic.calCut();
+    if (dinic.max_flow >= k) {
+        return vector<int>();
+    }
     vector<int> cut;
     for (auto& e : cutE) {
         cut.push_back(e.from);
@@ -34,12 +39,13 @@ vector<int> calLocolCut(Graph& graph, int source, int sink) {
     return cut;
 }
 
-tuple<vector<int>, int, int> calGlobalCut(Graph& graph) {
+// 寻找小于等于k的全局割
+tuple<vector<int>, int, int> calGlobalCut(Graph& graph, int k = INF) {
     int source = graph.minDegVertex();
     // case1: 如果有直接的割
     for (int sink = 0; sink < graph.n; sink++) {
         if (sink != source) {
-            auto cut = calLocolCut(graph, source, sink);
+            auto cut = calLocolCut(graph, source, sink, k);
             if (!cut.empty()) {
                 return make_tuple(cut, source, sink);
             }
@@ -52,7 +58,7 @@ tuple<vector<int>, int, int> calGlobalCut(Graph& graph) {
         for (int j = i + 1; j < (int)graph.edges[source].size(); j++) {
             auto& e2 = graph.edges[source][j];
             int v2 = e2.to;
-            auto cut = calLocolCut(graph, v1, v2);
+            auto cut = calLocolCut(graph, v1, v2, k);
             if (!cut.empty()) {
                 return make_tuple(cut, v1, v2);
             }

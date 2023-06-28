@@ -19,6 +19,7 @@ struct Edge {
 struct Graph {
     int n;
     vector<vector<Edge>> edges;
+    vector<int> id;
     void init(int n) {
         this->n = n;
         edges.assign(n, vector<Edge>());
