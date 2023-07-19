@@ -25,3 +25,5 @@ RUC " Algorithm and Data Structure II" Project: Enumerating k-Vertex Connected C
 > 测试平台为笔记本（非服务器），CPU：AMD Ryzen 9 5900HX，内存：16G，操作系统：Ubuntu 20.04.2 LTS
 
 ![](./doc/imgs/heatmap_sweep.png)
+
+> 运行效率较高（看起来是我那年助教写的10倍）
